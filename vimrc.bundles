@@ -107,7 +107,6 @@ Plug 'dyng/ctrlsf.vim'
 " map ?  <Plug>(incsearch-backward)
 " map g/ <Plug>(incsearch-stay)
 
-" quick run
 " quickrun
 Plug 'thinca/vim-quickrun'
 
