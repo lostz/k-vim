@@ -566,7 +566,7 @@ endif
 set background=dark
 set t_Co=256
 
-colorscheme solarized
+colorscheme seti
 " colorscheme molokai
 " colorscheme desert
 
