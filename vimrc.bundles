@@ -124,6 +124,7 @@ Plug 'sjl/gundo.vim'
 " airline
 " 状态栏增强展示
 Plug 'bling/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 " rainbow_parentheses
 " 括号显示增强
 Plug 'kien/rainbow_parentheses.vim'
@@ -214,6 +215,8 @@ call plug#end()
     " error code: http://pep8.readthedocs.org/en/latest/intro.html#error-codes
     let g:syntastic_python_checkers=['pyflakes', 'pep8'] " 使用pyflakes,速度比pylint快
     let g:syntastic_python_pep8_args='--ignore=E501,E225,E124,E712'
+    let g:syntastic_go_checkers = ['golint', 'govet', 'errcheck']
+    let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['go'] }
     " 重量级, 但是足够强大, 定制完成后相当个性化
     " pylint codes: http://pylint-messages.wikidot.com/all-codes
     " let g:syntastic_python_checkers=['pyflakes', 'pylint'] " 使用pyflakes,速度比pylint快
@@ -225,7 +228,7 @@ call plug#end()
     " let g:syntastic_html_checkers=['tidy', 'jshint']
 
     " to see error location list
-    let g:syntastic_always_populate_loc_list = 0
+    let g:syntastic_always_populate_loc_list =1
     let g:syntastic_auto_loc_list = 0
     let g:syntastic_loc_list_height = 5
 
@@ -238,8 +241,27 @@ call plug#end()
         endif
     endfunction
     nnoremap <Leader>s :call ToggleErrors()<cr>
-    " nnoremap <Leader>sn :lnext<cr>
-    " nnoremap <Leader>sp :lprevious<cr>
+    " ,en ,ep to jump between errors
+    function! <SID>LocationPrevious()
+    try
+        lprev
+    catch /^Vim\%((\a\+)\)\=:E553/
+        llast
+    endtry
+    endfunction
+
+    function! <SID>LocationNext()
+    try
+        lnext
+    catch /^Vim\%((\a\+)\)\=:E553/
+        lfirst
+    endtry
+    endfunction
+
+    nnoremap <silent> <Plug>LocationPrevious    :<C-u>exe 'call <SID>LocationPrevious()'<CR>
+    nnoremap <silent> <Plug>LocationNext        :<C-u>exe 'call <SID>LocationNext()'<CR>
+    nmap <silent> <Leader>ep    <Plug>LocationPrevious
+    nmap <silent> <Leader>en    <Plug>LocationNext
 
     " 修改高亮的背景色, 适应主题
     highlight SyntasticErrorSign guifg=white guibg=black
@@ -657,9 +679,7 @@ call plug#end()
     let g:go_highlight_build_constraints = 1
 
     let g:go_fmt_fail_silently = 1
-    " let g:go_fmt_command = "goimports"
-    " let g:syntastic_go_checkers = ['golint', 'govet', 'errcheck']
-    " let g:syntastic_mode_map = {'mode': 'active', 'passive_filetypes': ['go'] }
+    let g:go_fmt_command = "goimports"
 " }}}
 
 
