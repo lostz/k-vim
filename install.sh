@@ -34,11 +34,6 @@ echo "If error,you need to compile it yourself"
 echo "cd $CURRENT_DIR/bundle/YouCompleteMe/ && python install.py --clang-completer"
 cd $CURRENT_DIR/bundle/YouCompleteMe/
 git submodule update --init --recursive
-if [ `which clang` ]   # check system clang
-then
-    python install.py --clang-completer --system-libclang --gocode-complete   # use system clang
-else
-    python install.py --clang-completer --gocode-complete
-fi
+python install.py --clang-completer  --gocode-complete   
 
 echo "Install Done!"
