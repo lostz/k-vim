@@ -36,6 +36,7 @@ Plug 'scrooloose/syntastic'
 " 代码片段快速插入 (snippets中,是代码片段资源,需要学习)
 " Snippets are separated from the engine. Add this if you want them:
 Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
+Plug 'sourcegraph/sourcegraph-vim', {'for': ['go']}
 
 " auto complete
 " 代码自动补全
@@ -689,6 +690,12 @@ call plug#end()
     let g:vim_json_syntax_conceal = 0
 " }}}
 
+" sourcegraph {{{
+    let g:SOURCEGRAPH_AUTO = "false"
+    nnoremap <leader>graph :GRAP<CR>
+
+" }}}
+
 " ####### temp #######
 
 " beta {{{
@@ -701,5 +708,7 @@ call plug#end()
     " setenv PYTHONIOENCODING UTF-8
     " nnoremap <leader>y :call Yapf()<cr>
 " }}}
+
+" 
 
 "------------------------------------------- end of configs --------------------------------------------
