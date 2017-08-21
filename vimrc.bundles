@@ -3,7 +3,6 @@
 " ==========================================
 
 "------------------------------------------- begin of configs --------------------------------------------
-
 " ################### 包依赖 #####################
 " package dependence:  ctags, ag(he_silver_searcher)
 " python dependence:   pep8, pyflake
@@ -17,7 +16,7 @@ filetype off " required! turn off
 " inspired by spf13, 自定义需要的插件集合
 if !exists('g:bundle_groups')
     " more options: ['json', 'nginx', 'golang', 'ruby', 'less', 'json', ]
-    let g:bundle_groups=['python', 'golang', 'json', 'tmux' ]
+    let g:bundle_groups=['python', 'golang','json']
 endif
 
 " ----------------------------------------------------------------------------
@@ -27,10 +26,15 @@ endif
 
 call plug#begin('~/.vim/bundle')
 
+
 " 移动光标到插件名上, 使用'#'快速跳转到每个插件的配置处
 
 " syntastic
-Plug 'scrooloose/syntastic'
+if v:version < 800
+    Plug 'scrooloose/syntastic'
+else
+    Plug 'w0rp/ale'
+endif
 
 " dash
 Plug 'rizzatti/dash.vim'
@@ -48,11 +52,13 @@ Plug 'Valloric/YouCompleteMe'
 " 自动补全单引号，双引号等
 Plug 'Raimondi/delimitMate'
 " 自动补全html/xml标签
-Plug 'docunext/closetag.vim'
+Plug 'docunext/closetag.vim', { 'for': ['html', 'xml'] }
 
 " quick edit
 " 快速注释
 Plug 'scrooloose/nerdcommenter'
+
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 
 
 " 快速加入修改环绕字符
@@ -177,6 +183,11 @@ if count(g:bundle_groups, 'python')
     Plug 'hdima/python-syntax'
     Plug 'hynek/vim-python-pep8-indent'
     Plug 'Glench/Vim-Jinja2-Syntax'
+    " isort  https://github.com/timothycrosley/isort#readme + https://github.com/fisadev/vim-isor
+    " pip install isort
+    Plug 'fisadev/vim-isort'
+    " Shift-V 上下选中, ctrl + i 规范化
+    let g:vim_isort_map = '<C-i>'
 endif
 
 if count(g:bundle_groups, 'json')
@@ -216,7 +227,7 @@ call plug#end()
     " let g:syntastic_python_checkers=['pyflakes'] " 使用pyflakes
     " 中等
     " error code: http://pep8.readthedocs.org/en/latest/intro.html#error-codes
-    let g:syntastic_python_checkers=['pyflakes', 'pep8'] " 使用pyflakes,速度比pylint快
+    let g:syntastic_python_checkers=['flake8',] " 使用pyflakes,速度比pylint快
     let g:syntastic_python_pep8_args='--ignore=E501,E225,E124,E712'
     let g:syntastic_go_checkers = ['go', 'golint']
     let g:syntastic_mode_map = {"mode" : "active","active_filetypes" : ["go","py"],}
@@ -231,8 +242,10 @@ call plug#end()
     " let g:syntastic_html_checkers=['tidy', 'jshint']
 
     " to see error location list
-    let g:syntastic_always_populate_loc_list =1
+    let g:syntastic_always_populate_loc_list = 1
+    let g:syntastic_enable_signs = 1
     let g:syntastic_auto_loc_list = 0
+    let g:syntastic_auto_jump = 0
     let g:syntastic_loc_list_height = 5
 
     function! ToggleErrors()
@@ -268,6 +281,7 @@ call plug#end()
 
     " 修改高亮的背景色, 适应主题
     highlight SyntasticErrorSign guifg=white guibg=black
+    nnoremap <silent> <Leader>ec :SyntasticToggleMode<CR>
 " }}}
 
 
@@ -276,6 +290,8 @@ call plug#end()
 " YouCompleteMe {{{
     "youcompleteme  默认tab  s-tab 和自动补全冲突
     "let g:ycm_key_list_select_completion=['<c-n>']
+    let g:ycm_path_to_python_interpreter = '/usr/local/bin/python2'
+    let g:ycm_server_use_vim_stdout = 0
     let g:ycm_key_list_select_completion = ['<Down>']
     "let g:ycm_key_list_previous_completion=['<c-p>']
     let g:ycm_key_list_previous_completion = ['<Up>']
@@ -286,11 +302,14 @@ call plug#end()
     let g:ycm_collect_identifiers_from_tags_files = 1
     " 开启语法关键字补全
     let g:ycm_seed_identifiers_with_syntax=1
+     " 回车作为选中
+    let g:ycm_key_list_stop_completion = ['<CR>']
 
     "let g:ycm_seed_identifiers_with_syntax=1   "语言关键字补全, 不过python关键字都很短，所以，需要的自己打开
 
     " 跳转到定义处, 分屏打开
     let g:ycm_goto_buffer_command = 'horizontal-split'
+    let g:ycm_register_as_syntastic_checker = 0
     " nnoremap <leader>jd :YcmCompleter GoToDefinition<CR>
     nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
     nnoremap <leader>gd :YcmCompleter GoToDeclaration<CR>
@@ -377,6 +396,8 @@ call plug#end()
     let g:easy_align_delimiters = {}
     endif
     let g:easy_align_delimiters['#'] = { 'pattern': '#', 'ignore_groups': ['String'] }
+      " If a delimiter is in a highlight group whose name matches any of the followings, it will be ignored.
+    let g:easy_align_ignore_groups = ['Comment', 'String']
 " }}}
 
 " ################### 快速移动 ###################
@@ -694,19 +715,5 @@ call plug#end()
 " }}}
 
 
-" ####### temp #######
-
-" beta {{{
-    " python code format
-    autocmd FileType python nnoremap <leader>y :0,$!yapf<Cr>
-    " Plug 'mindriot101/vim-yapf'
-    " scriptencoding utf-8
-    " let g:yapf_style = "google"
-    " let g:yapf_style = "pep8"
-    " setenv PYTHONIOENCODING UTF-8
-    " nnoremap <leader>y :call Yapf()<cr>
-" }}}
-
-" 
 
 "------------------------------------------- end of configs --------------------------------------------
