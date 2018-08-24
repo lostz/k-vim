@@ -37,7 +37,7 @@ else
 endif
 
 " docker
-Plugin 'ekalinin/Dockerfile.vim'
+Plug 'ekalinin/Dockerfile.vim'
 
 " dash
 Plug 'rizzatti/dash.vim'
@@ -284,6 +284,8 @@ if has_key(g:plugs, 'syntastic')
     " 修改高亮的背景色, 适应主题
     highlight SyntasticErrorSign guifg=white guibg=black
     nnoremap <silent> <Leader>ec :SyntasticToggleMode<CR>
+     " 关闭syntastic语法检查, 鼠标复制代码时用到, 防止把错误标志给复制了
+    nnoremap <silent> <Leader>ec :SyntasticToggleMode<CR>
 endif
 " }}}
 " ale {{{
@@ -291,13 +293,14 @@ if has_key(g:plugs, 'ale')
     " pip install flake8
     " npm install -g eslint eslint-plugin-standard eslint-plugin-promise eslint-config-standard
     " npm install -g eslint-plugin-import eslint-plugin-node eslint-plugin-html babel-eslint
+    " E501 -> 120 chars
     let g:ale_linters = {
     \   'python': ['flake8'],
+    \   'javascript': ['eslint'],
     \}
-
-    " E501 -> 120 chars
     let g:ale_python_flake8_args="--ignore=E114,E116,E131 --max-line-length=120"
     " --ignore=E225,E124,E712,E116
+    let g:ale_sign_column_always = 1
 
     let g:ale_sign_error = '>>'
     let g:ale_sign_warning = '>'
@@ -752,8 +755,9 @@ endif
     let g:go_fmt_fail_silently = 1
     " format with goimports instead of gofmt
     let g:go_fmt_command = "goimports"
-    let g:syntastic_go_checkers = ['golint', 'govet', 'errcheck']
-    let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['go', 'java'] }
+    let g:go_metalinter_enabled = ['vet', 'golint', 'errcheck']
+    let g:go_metalinter_autosave = 1
+    let g:go_auto_type_info = 1
 " }}}
 
 
