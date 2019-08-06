@@ -36,6 +36,9 @@ else
     Plug 'w0rp/ale'
 endif
 
+" vim nord
+Plug 'arcticicestudio/nord-vim'
+
 " docker
 Plug 'ekalinin/Dockerfile.vim'
 
@@ -297,6 +300,7 @@ if has_key(g:plugs, 'ale')
     let g:ale_linters = {
     \   'python': ['flake8'],
     \   'javascript': ['eslint'],
+    \ 'go': ['gopls'],
     \}
     let g:ale_python_flake8_args="--ignore=E114,E116,E131 --max-line-length=120"
     " --ignore=E225,E124,E712,E116
